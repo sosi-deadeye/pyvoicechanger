@@ -11,16 +11,25 @@ from time import sleep
 
 from PyQt5.QtCore import QProcess, Qt, QTimer
 from PyQt5.QtGui import QColor, QCursor, QIcon
-from PyQt5.QtWidgets import (QApplication, QDial, QGraphicsDropShadowEffect,
-                             QGroupBox, QLabel, QMainWindow, QMenu,
-                             QShortcut, QSystemTrayIcon, QVBoxLayout)
+from PyQt5.QtWidgets import (
+    QApplication,
+    QDial,
+    QGraphicsDropShadowEffect,
+    QGroupBox,
+    QLabel,
+    QMainWindow,
+    QMenu,
+    QShortcut,
+    QSystemTrayIcon,
+    QVBoxLayout,
+)
 
 
-__version__ = '1.5.0'
-__license__ = ' GPLv3+ LGPLv3+ '
-__author__ = ' juancarlos '
-__email__ = ' juancarlospaco@gmail.com '
-__url__ = 'https://github.com/juancarlospaco/pyvoicechanger#pyvoicechanger'
+__version__ = "1.5.0"
+__license__ = " GPLv3+ LGPLv3+ "
+__author__ = " juancarlos "
+__email__ = " juancarlospaco@gmail.com "
+__url__ = "https://github.com/sosi-deadeye/pyvoicechanger"
 
 
 ###############################################################################
@@ -44,7 +53,8 @@ class MainWindow(QMainWindow):
         QShortcut("Ctrl+q", self, activated=lambda: self.close())
         self.menuBar().addMenu("&File").addAction("Quit", lambda: exit())
         self.menuBar().addMenu("Sound").addAction(
-            "STOP !", lambda: call('killall rec', shell=True))
+            "STOP !", lambda: call("killall rec", shell=True)
+        )
         windowMenu = self.menuBar().addMenu("&Window")
         windowMenu.addAction("Hide", lambda: self.hide())
         windowMenu.addAction("Minimize", lambda: self.showMinimized())
@@ -59,21 +69,27 @@ class MainWindow(QMainWindow):
         self.setCentralWidget(group0)
         self.process = QProcess(self)
         self.process.error.connect(
-            lambda: self.statusBar().showMessage("Info: Process Killed", 5000))
+            lambda: self.statusBar().showMessage("Info: Process Killed", 5000)
+        )
         self.control = QDial()
         self.control.setRange(-10, 20)
         self.control.setSingleStep(5)
         self.control.setValue(0)
         self.control.setCursor(QCursor(Qt.OpenHandCursor))
         self.control.sliderPressed.connect(
-            lambda: self.control.setCursor(QCursor(Qt.ClosedHandCursor)))
+            lambda: self.control.setCursor(QCursor(Qt.ClosedHandCursor))
+        )
         self.control.sliderReleased.connect(
-            lambda: self.control.setCursor(QCursor(Qt.OpenHandCursor)))
+            lambda: self.control.setCursor(QCursor(Qt.OpenHandCursor))
+        )
         self.control.valueChanged.connect(
-            lambda: self.control.setToolTip(f"<b>{self.control.value()}"))
+            lambda: self.control.setToolTip(f"<b>{self.control.value()}")
+        )
         self.control.valueChanged.connect(
             lambda: self.statusBar().showMessage(
-                f"Voice deformation: {self.control.value()}", 5000))
+                f"Voice deformation: {self.control.value()}", 5000
+            )
+        )
         self.control.valueChanged.connect(self.run)
         self.control.valueChanged.connect(lambda: self.process.kill())
         # Graphic effect
@@ -89,7 +105,8 @@ class MainWindow(QMainWindow):
         self.slider_timer.timeout.connect(self.on_slider_timer_timeout)
         # an icon and set focus
         QLabel(self.control).setPixmap(
-            QIcon.fromTheme("audio-input-microphone").pixmap(32))
+            QIcon.fromTheme("audio-input-microphone").pixmap(32)
+        )
         self.control.setFocus()
         QVBoxLayout(group0).addWidget(self.control)
         self.menu = QMenu(__doc__)
@@ -98,8 +115,9 @@ class MainWindow(QMainWindow):
         self.menu.addSeparator()
         self.menu.addAction(
             "Show / Hide",
-            lambda: self.hide() if self.isVisible() else self.showNormal())
-        self.menu.addAction("STOP !", lambda: call('killall rec', shell=True))
+            lambda: self.hide() if self.isVisible() else self.showNormal(),
+        )
+        self.menu.addAction("STOP !", lambda: call("killall rec", shell=True))
         self.menu.addSeparator()
         self.menu.addAction("Quit", lambda: exit())
         self.tray.setContextMenu(self.menu)
@@ -110,7 +128,7 @@ class MainWindow(QMainWindow):
         if self.slider_timer.isActive():
             self.slider_timer.stop()
         self.glow.setEnabled(True)
-        call('killall rec ; killall play', shell=True)
+        call("killall rec ; killall play", shell=True)
         self.slider_timer.start(3000)
 
     def on_slider_timer_timeout(self):
@@ -148,12 +166,9 @@ class MainWindow(QMainWindow):
             self.tray.setIcon(self.windowIcon())
             self.tray.setToolTip(__doc__)
             self.tray.activated.connect(
-                lambda: self.hide() if self.isVisible()
-                else self.showNormal())
+                lambda: self.hide() if self.isVisible() else self.showNormal()
+            )
             return self.tray.show()
-
-
-###############################################################################
 
 
 def main():
@@ -165,11 +180,12 @@ def main():
     application.setOrganizationDomain("pyvoicechanger")
     application.setWindowIcon(QIcon.fromTheme("audio-input-microphone"))
     application.aboutToQuit.connect(
-        lambda: call('killall rec ; killall play', shell=True))
+        lambda: call("killall rec ; killall play", shell=True)
+    )
     mainwindow = MainWindow()
     mainwindow.show()
     sys.exit(application.exec_())
 
 
-if __name__ in '__main__':
+if __name__ in "__main__":
     main()
